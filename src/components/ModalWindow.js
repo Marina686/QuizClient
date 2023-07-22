@@ -1,31 +1,10 @@
 import React, { useState } from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import "./../App.css";
+import QuestionComponent from "./QuestionComponent";
 import QuitModal from "./QuitModal";
 
 function ModalWindow(props) {
-  const { isOpen, onClose } = props;
-  const questions = [
-    {
-      question: "What is a Dockerfile?",
-      options: [
-        "A. Docker can build images automatically by reading the instructions from a file called Dockerfile.",
-        "B. Docker can build audio automatically by reading the instructions from a file called Dockerfile.",
-        "C. Docker cannot build images automatically by reading the instructions from a file called Dockerfile.",
-      ],
-    },
-    {
-      question: "What does the FROM instruction do in a Dockerfile?",
-      options: [
-        "A. FROM is an invalid instruction.",
-        "B. FROM adds files from your Docker client’s current directory.",
-        "C. FROM specifies the creator of the image.",
-        "D. FROM creates a layer from a base Docker image.",
-      ],
-    },
-    // Add more questions here...
-  ];
-
+  const { isOpen, onClose, questions } = props;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [quitModalOpen, setQuitModalOpen] = useState(false);
 
@@ -55,14 +34,12 @@ function ModalWindow(props) {
     <div>
       <Modal isOpen={isOpen} toggle={toggleNextQuestion} fullscreen>
         <ModalHeader toggle={toggleNextQuestion} close={closeBtn}>
-          {questions[currentQuestion].question}
+          {questions[currentQuestion]?.text} {/* Display the current question text */}
         </ModalHeader>
         <ModalBody>
-          {questions[currentQuestion].options.map((option, index) => (
-            <div className="card" key={index}>
-              <div className="card-body">{option}</div>
-            </div>
-          ))}
+          {questions[currentQuestion]?.options ? (
+            <QuestionComponent options={questions[currentQuestion]?.options} />
+          ) : null}
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={toggleNextQuestion}>
@@ -70,7 +47,11 @@ function ModalWindow(props) {
           </Button>
         </ModalFooter>
       </Modal>
-      <QuitModal isOpen={quitModalOpen} toggle={toggleQuitModal} onQuit={handleQuit} />
+      <QuitModal
+        isOpen={quitModalOpen}
+        toggle={toggleQuitModal}
+        onQuit={handleQuit}
+      />
     </div>
   );
 }
