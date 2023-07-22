@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import QuitModal from "./QuitModal";
+import QuestionComponent from "./QuestionComponent";
 
 function ModalWindow(props) {
   const { isOpen, onClose, questions } = props;
@@ -28,6 +28,7 @@ function ModalWindow(props) {
   );
 
   const currentQuestion = questions[currentQuestionIndex];
+  const currentQuestionOptions = currentQuestion ? currentQuestion.options : [];
 
   return (
     <div>
@@ -38,17 +39,7 @@ function ModalWindow(props) {
         <ModalBody>
           <div key={currentQuestion.num}>
             <h5>{currentQuestion.text}</h5>
-            {currentQuestion.answer === "?" ? (
-              // If it's a question, render nothing for options
-              null
-            ) : (
-              // Otherwise, render the options
-              currentQuestion.options.map((option) => (
-                <div className="card" key={option.num}>
-                  <div className="card-body">{option.text}</div>
-                </div>
-              ))
-            )}
+            <QuestionComponent options={currentQuestionOptions} />
           </div>
         </ModalBody>
         <ModalFooter>
@@ -60,15 +51,8 @@ function ModalWindow(props) {
           </Button>
         </ModalFooter>
       </Modal>
-      <QuitModal
-        isOpen={quitModalOpen}
-        toggle={toggleQuitModal}
-        onQuit={handleQuit}
-      />
     </div>
   );
 }
 
 export default ModalWindow;
-
- 
