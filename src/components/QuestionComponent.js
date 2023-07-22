@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import './../App.css'; 
 
-const QuestionComponent = ({ options }) => {
+const QuestionComponent = ({ options, onOptionSelected }) => {
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
 
   const handleOptionClick = (index) => {
     setSelectedOptionIndex(index);
+    onOptionSelected(); // Call the function to notify ModalWindow that an option is selected
   };
 
   return (
