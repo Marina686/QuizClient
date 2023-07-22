@@ -19,34 +19,40 @@ function App() {
     setModalOpen(false);
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     axios
-      .get("http://localhost:3001/api/Db")  
+      .get("http://localhost:3001/api/Db")
       .then((response) => {
-        const questions = mapDbModelsToQuestions(response.data);
-        console.log("Setting questions state:", questions); // Logging for debugging
-        setQuestions(questions);
+        if (Array.isArray(response.data)) {
+          const questions = mapDbModelsToQuestions(response.data);
+          console.log("Setting questions state:", questions);
+          setQuestions(questions);
+        } else {
+          // Handle the case when response.data is not an array
+          console.error("Response data is not an array:", response.data);
+          setQuestions([]);
+        }
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        setQuestions([]);
+        setQuestions([]); // Set questions state to empty array on error
       });
   }, []);
     
   return (
     <div className="container-fluid"> 
       <Header /> 
-      <Home onCardClick={handleCardClick} questions={questions} />
-      {isModalOpen && (
-        ReactDOM.createPortal(
-          <ModalWindow
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            questions={questions}
-          />,
-          document.getElementById("modal-root")
-        )
-      )}
+      <Home onCardClick={handleCardClick} questions={questions} /> 
+      {Array.isArray(questions) && isModalOpen && (
+  ReactDOM.createPortal(
+    <ModalWindow
+      isOpen={isModalOpen}
+      onClose={handleCloseModal}
+      questions={questions}
+    />,
+    document.getElementById("modal-root")
+  )
+)}
     </div>
   );
 }

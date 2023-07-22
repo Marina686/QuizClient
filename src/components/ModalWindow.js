@@ -1,27 +1,24 @@
 import React, { useState } from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import QuestionComponent from "./QuestionComponent";
 import QuitModal from "./QuitModal";
 
 function ModalWindow(props) {
   const { isOpen, onClose, questions } = props;
-  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [quitModalOpen, setQuitModalOpen] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const toggleQuitModal = () => {
     setQuitModalOpen(!quitModalOpen);
   };
 
-  const toggleNextQuestion = () => {
-    if (currentQuestion === questions.length - 1) {
-      onClose();
-    } else {
-      setCurrentQuestion(currentQuestion + 1);
-    }
-  };
-
   const handleQuit = () => {
     onClose(); // Return to Home component
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex + 1 < questions.length) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
   };
 
   const closeBtn = (
@@ -30,20 +27,36 @@ function ModalWindow(props) {
     </button>
   );
 
+  const currentQuestion = questions[currentQuestionIndex];
+
   return (
     <div>
-      <Modal isOpen={isOpen} toggle={toggleNextQuestion} fullscreen>
-        <ModalHeader toggle={toggleNextQuestion} close={closeBtn}>
-          {questions[currentQuestion]?.text} {/* Display the current question text */}
+      <Modal isOpen={isOpen} toggle={onClose} fullscreen>
+        <ModalHeader toggle={onClose} close={closeBtn}>
+          Quiz Questions {/* Add a title for the modal */}
         </ModalHeader>
         <ModalBody>
-          {questions[currentQuestion]?.options ? (
-            <QuestionComponent options={questions[currentQuestion]?.options} />
-          ) : null}
+          <div key={currentQuestion.num}>
+            <h5>{currentQuestion.text}</h5>
+            {currentQuestion.answer === "?" ? (
+              // If it's a question, render nothing for options
+              null
+            ) : (
+              // Otherwise, render the options
+              currentQuestion.options.map((option) => (
+                <div className="card" key={option.num}>
+                  <div className="card-body">{option.text}</div>
+                </div>
+              ))
+            )}
+          </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggleNextQuestion}>
-            {currentQuestion === questions.length - 1 ? "Close" : "Next Question"}
+          <Button color="primary" onClick={handleNextQuestion}>
+            Next Question
+          </Button>
+          <Button color="secondary" onClick={onClose}>
+            Close
           </Button>
         </ModalFooter>
       </Modal>
@@ -57,3 +70,5 @@ function ModalWindow(props) {
 }
 
 export default ModalWindow;
+
+ 
